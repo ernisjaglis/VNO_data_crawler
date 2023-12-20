@@ -1,9 +1,0 @@
-
-#to check if connection is ok
-response = requests.get(url)
-# Check if the request was successful
-if response.status_code == 200:
-html_content = response.content
-else:
- print("Failed to fetch the website.")
-exit()
