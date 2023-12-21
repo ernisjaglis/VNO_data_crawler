@@ -111,7 +111,7 @@ print(all_airports_codes)
 all_airports_urls = {}
 
 def url_by_airport_code(airport_code):
-    all_airports_url = []
+    #all_airports_url = []
     for airport_code in all_airports_codes:
         try:
             general_url = f"https://www.flightradar24.com/data/airports/{airport_code}"
@@ -121,7 +121,6 @@ def url_by_airport_code(airport_code):
             'general_url': general_url,
             'arrivals_url': arrivals_url,
             'departures_url': departures_url}
-
         except Exception as e:
             print(f"An error occurred for {airport_code}: {e}")
 
@@ -136,7 +135,7 @@ print(all_airports_urls) #might be commented, left uncommented for debugging pur
 
 # Defining function to get data (some texts, some statistics/numbers, photos) of airports from flightradar website
 
-def get_airports_general_data():
+def get_airports_general_data(all_airports_urls):
     try:
         cookies = {
     '_ga': 'GA1.1.955066919.1702577494',
