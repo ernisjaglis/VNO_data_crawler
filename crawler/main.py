@@ -8,8 +8,9 @@ import os
 
 
 
-# Defining function to get a list of busiest airports by international passenger traffic in 2022 from wiki
-wiki_url = "https://en.wikipedia.org/wiki/List_of_busiest_airports_by_international_passenger_traffic"
+# Defining function to get a list of busiest airports by passenger traffic in 2022 from wiki
+#wiki_url = "https://en.wikipedia.org/wiki/List_of_busiest_airports_by_international_passenger_traffic"
+wiki_url = "https://en.wikipedia.org/wiki/List_of_busiest_airports_by_passenger_traffic"
 busiest_airports_result = []
 
 def get_busiest_airports():
@@ -54,18 +55,19 @@ def get_busiest_airports():
                 for row in rows:
                     cells = row.find_all(['td'])
                     if cells and len(cells) >= 3:
-                        city = cells[1].text.strip()
-                        airport_name = cells[2].text.strip()
+                        airport_name = cells[1].text.strip()
+                        location = cells[2].text.strip()
+                        country = cells[3].text.strip()
                         airport_code = cells[4].text.strip()
                         passengers = cells[5].text.strip()
                         airport_code_split = airport_code.split('/')[0]
                         busiest_airports_result.append({
-                            'City': city,
-                            'Airport': airport_name,
+                            'Airport Name': airport_name,
+                            'Location': location,
+                            'Country': country, 
                             'Airport Code': airport_code_split,
-                            'Passengers': passengers
-                        })
-                        #print(f"City: {city}, Airport: {airport_name}, Airport Code: {airport_code}, Passengers: {passengers}")
+                            'Passengers': passengers})
+                        #print(f"Airport Name: {airport_name}, Location: {location}, Country: {country}, Airport Code: {airport_code_split}, Passengers: {passengers}")
             else:
                 print("Table not found on the page.")
         else:
@@ -75,7 +77,7 @@ def get_busiest_airports():
 
 
 get_busiest_airports()
-print(busiest_airports_result)
+#print(busiest_airports_result)
 
 
 
@@ -94,48 +96,49 @@ sample_data_folder = 'sample data'
 file_name = 'busiest_airports_result.csv'
 
 # Save the data to a CSV file in the 'sample data' folder
-# save_to_csv(busiest_airports_result, sample_data_folder, file_name)
+save_to_csv(busiest_airports_result, sample_data_folder, file_name)
+
 
 
 # Function example to create url's for further data gathering according the list created with 'get_busiest_airports' function
-# def get_city_data(cities_data):
-#     for city_info in cities_data:
-#         city_code = city_info.get('Airport Code')
-#         if city_code:
-#             city_data = {"City Code": city_code, "General Info": None, "Arrivals": None, "Departures": None}
+def get_city_data(cities_data):
+    for city_info in cities_data:
+        city_code = city_info.get('Airport Code')
+        if city_code:
+            city_data = {"City Code": city_code, "General Info": None, "Arrivals": None, "Departures": None}
 
-#             try:
-#                 # General Info
-#                 general_url = f"https://www.flightradar24.com/data/airports/{city_code}"
-#                 general_response = requests.get(general_url)
-#                 general_response.raise_for_status()
-#                 general_soup = BeautifulSoup(general_response.content, 'html.parser')
-#                 city_data["General Info"] = general_soup  # Store general information, modify as needed
+            try:
+                # General Info
+                general_url = f"https://www.flightradar24.com/data/airports/{city_code}"
+                general_response = requests.get(general_url)
+                general_response.raise_for_status()
+                general_soup = BeautifulSoup(general_response.content, 'html.parser')
+                city_data["General Info"] = general_soup  # Store general information, modify as needed
 
-#                 # Arrivals
-#                 arrivals_url = f"https://www.flightradar24.com/data/airports/{city_code}/arrivals"
-#                 arrivals_response = requests.get(arrivals_url)
-#                 arrivals_response.raise_for_status()
-#                 arrivals_soup = BeautifulSoup(arrivals_response.content, 'html.parser')
-#                 city_data["Arrivals"] = arrivals_soup  # Store arrivals information, modify as needed
+                # Arrivals
+                arrivals_url = f"https://www.flightradar24.com/data/airports/{city_code}/arrivals"
+                arrivals_response = requests.get(arrivals_url)
+                arrivals_response.raise_for_status()
+                arrivals_soup = BeautifulSoup(arrivals_response.content, 'html.parser')
+                city_data["Arrivals"] = arrivals_soup  # Store arrivals information, modify as needed
 
-#                 # Departures
-#                 departures_url = f"https://www.flightradar24.com/data/airports/{city_code}/departures"
-#                 departures_response = requests.get(departures_url)
-#                 departures_response.raise_for_status()
-#                 departures_soup = BeautifulSoup(departures_response.content, 'html.parser')
-#                 city_data["Departures"] = departures_soup  # Store departures information, modify as needed
+                # Departures
+                departures_url = f"https://www.flightradar24.com/data/airports/{city_code}/departures"
+                departures_response = requests.get(departures_url)
+                departures_response.raise_for_status()
+                departures_soup = BeautifulSoup(departures_response.content, 'html.parser')
+                city_data["Departures"] = departures_soup  # Store departures information, modify as needed
 
-#             except Exception as e:
-#                 print(f"An error occurred for {city_code}: {e}")
+            except Exception as e:
+                print(f"An error occurred for {city_code}: {e}")
 
-#             # Process or store city_data as needed
-#             print(city_data)
+            # Process or store city_data as needed
+            print(city_data)
 
-# # Example usage with your provided dictionary
-# city_info_list = [{'City': 'Dubai', 'Airport': 'Dubai International Airport', 'Airport Code': 'DXB', 'Passengers': '66,069,981'}, {'City': 'London', 'Airport': 'London Heathrow Airport', 'Airport Code': 'LHR', 'Passengers': '58,243,060'}, {'City': 'Amsterdam', 'Airport': 'Amsterdam Airport Schiphol', 'Airport Code': 'AMS', 'Passengers': '52,467,346'}, {'City': 'Paris', 'Airport': 'Paris-Charles de Gaulle Airport', 'Airport Code': 'CDG', 'Passengers': '51,763,569'}, {'City': 'Istanbul', 'Airport': 'Istanbul Airport', 'Airport Code': 'IST', 'Passengers': '48,521,725'}, {'City': 'Frankfurt', 'Airport': 'Frankfurt Airport', 'Airport Code': 'FRA', 'Passengers': '44,771,711'}, {'City': 'Madrid', 'Airport': 'Madrid-Barajas Airport', 'Airport Code': 'MAD', 'Passengers': '36,231,191'}, {'City': 'Doha', 'Airport': 'Hamad International Airport', 'Airport Code': 'DOH', 'Passengers': '35,726,721'}, {'City': 'Singapore', 'Airport': 'Singapore Changi Airport', 'Airport Code': 'SIN', 'Passengers': '31,902,000'}, {'City': 'London', 'Airport': 'London Gatwick Airport', 'Airport Code': 'LGW', 'Passengers': '30,145,083'}]
+# Example usage with your provided dictionary
+city_info_list = [{'City': 'Dubai', 'Airport': 'Dubai International Airport', 'Airport Code': 'DXB', 'Passengers': '66,069,981'}, {'City': 'London', 'Airport': 'London Heathrow Airport', 'Airport Code': 'LHR', 'Passengers': '58,243,060'}, {'City': 'Amsterdam', 'Airport': 'Amsterdam Airport Schiphol', 'Airport Code': 'AMS', 'Passengers': '52,467,346'}, {'City': 'Paris', 'Airport': 'Paris-Charles de Gaulle Airport', 'Airport Code': 'CDG', 'Passengers': '51,763,569'}, {'City': 'Istanbul', 'Airport': 'Istanbul Airport', 'Airport Code': 'IST', 'Passengers': '48,521,725'}, {'City': 'Frankfurt', 'Airport': 'Frankfurt Airport', 'Airport Code': 'FRA', 'Passengers': '44,771,711'}, {'City': 'Madrid', 'Airport': 'Madrid-Barajas Airport', 'Airport Code': 'MAD', 'Passengers': '36,231,191'}, {'City': 'Doha', 'Airport': 'Hamad International Airport', 'Airport Code': 'DOH', 'Passengers': '35,726,721'}, {'City': 'Singapore', 'Airport': 'Singapore Changi Airport', 'Airport Code': 'SIN', 'Passengers': '31,902,000'}, {'City': 'London', 'Airport': 'London Gatwick Airport', 'Airport Code': 'LGW', 'Passengers': '30,145,083'}]
 
-# get_city_data(city_info_list)
+get_city_data(city_info_list)
 
 
 
